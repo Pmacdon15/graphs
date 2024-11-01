@@ -1,20 +1,21 @@
+using System.Runtime.CompilerServices;
 using System.Windows.Forms.DataVisualization.Charting;
 namespace graphs
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         public System.Windows.Forms.DataVisualization.Charting.Chart chart = new System.Windows.Forms.DataVisualization.Charting.Chart();
 
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
 
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void MainForm_Load(object sender, EventArgs e)
         {
             chart.Location = new Point(10, 10);
-            chart.Size = new Size(600, 400);
+            chart.Size = new Size((int)(this.Width * 0.7), (int)(this.Height * 0.7));
 
             chart.ChartAreas.Add(new ChartArea());
             chart.ChartAreas[0].AxisX.LabelStyle.Interval = 1;
@@ -28,7 +29,7 @@ namespace graphs
 
         private void button_Add_Click(object sender, EventArgs e)
         {
-            int value = int.Parse(textBox_Value_Input.Text);
+            double value = double.Parse(numericUpDown_Input.Text);
             string type = textBox_Type_Input.Text;
 
             var point = new DataPoint(chart.Series[0].Points.Count + 1, value);
@@ -43,10 +44,22 @@ namespace graphs
             );
 
             chart.Series[0].Points.Add(point);
+            numericUpDown_Input.Focus();
+            numericUpDown_Input.Value = 0;
+            textBox_Type_Input.Text = String.Empty ;
         }
 
         private void button_Pie_chart_Click(object sender, EventArgs e)
         {
+
+            for (int i = 0; i < chart.Series[0].Points.Count; i++)
+            {
+                if (chart.Series[0].Points[i].YValues[0] < 0)
+                {
+                    MessageBox.Show("Pie Chart doesn't allow negative numbers");
+                    return;
+                }
+            }
             chart.Series[0].ChartType = SeriesChartType.Pie;
         }
 
@@ -58,6 +71,11 @@ namespace graphs
         private void button_Line_graph_Click(object sender, EventArgs e)
         {
             chart.Series[0].ChartType = SeriesChartType.Line;
+        }
+
+        private void button_Clear_Click(object sender, EventArgs e)
+        {
+            chart.Series[0].Points.Clear();
         }
     }
 }
